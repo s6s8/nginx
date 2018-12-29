@@ -1,0 +1,25 @@
+# /etc/nginx/conf.d/default.conf
+# proxy_set_header X-Forwarded-Proto $scheme;
+
+
+{ echo 'include /etc/nginx/vhost.d/default;'; echo 'proxy_set_header X-Forwarded-Proto $scheme;';} > /etc/nginx/vhost.d/demo.com
+
+
+docker run -d -e "VIRTUAL_HOST=demo.com" -e "LETSENCRYPT_HOST=demo.com" -e "LETSENCRYPT_EMAIL=admin@demo.com" brndnmtthws/nginx-echo-headers
+
+sed '/proxy_pass http:\/\/demo.com;/a		proxy_set_header X-Forwarded-Proto \$scheme;' /etc/nginx/conf.d/default.conf
+
+
+docker run --name openprojectSKY --restart always \
+    -v /home/openproject/db-data:/var/lib/postgresql/9.4/main \
+    -v /home/openproject/:/var/db/openproject \
+    -e SECRET_KEY_BASE=randomtext \
+    -e CACHE_MEMCACHE_SERVER=memcache.host \
+    -e CACHE_NAMESPACE=openproject \
+    -e VIRTUAL_HOST=project.demo.com \
+    -e VIRTUAL_PORT=80 \
+    -e LETSENCRYPT_HOST=project.demo.com \
+    -e LETSENCRYPT_EMAIL=admin@s=demo.com \
+    --net "nginx-net" -d openproject/community:7
+    
+docker network create nginx-net
