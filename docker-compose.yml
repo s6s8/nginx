@@ -25,5 +25,5 @@ services:
     networks:
       - nginx-net
 networks:
-  frontend-network:
+  nginx-net:
     external: true
