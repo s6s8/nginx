@@ -8,7 +8,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - /home/dev/nginx:/etc/nginx/vhost.d
+      - /etc/nginx/vhost.d
       - /usr/share/nginx/html
       - /etc/nginx/certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
